@@ -24,6 +24,10 @@ dependencies = [
     # PDF 解析
     "PyMuPDF>=1.25",
 
+    # 后端（Phase 4）
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.34",
+
     # CLI
     "rich>=13.0",
 ]
@@ -34,9 +38,7 @@ full = [
     "chromadb>=0.6",
     "sentence-transformers>=3.0",
 
-    # 后端（Phase 4 需要）
-    "fastapi[standard]>=0.115",
-    "uvicorn[standard]>=0.34",
+
 ]
 
 dev = [
