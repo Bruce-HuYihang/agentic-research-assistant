@@ -77,7 +77,7 @@ async def executor_node(state: ResearchState) -> dict:
 
     return {
         "search_results": [*state.search_results, *new_results],
-        "visited_urls": visited_urls,
+        "visited_urls": list(visited_urls),
         "memory_matches": memory_matches,
         "current_step": "执行完成",
     }

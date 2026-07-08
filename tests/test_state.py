@@ -14,7 +14,7 @@ class TestResearchState:
         assert s.sub_questions == []
         assert s.search_plan == []
         assert s.search_results == []
-        assert s.visited_urls == set()
+        assert s.visited_urls == []
         assert s.is_satisfied is False
         assert s.iteration == 0
         assert s.max_iterations == 3
@@ -32,9 +32,9 @@ class TestResearchState:
         assert s.max_iterations == 5
         assert s.use_memory is False
 
-    def test_visited_urls_as_set(self):
+    def test_visited_urls_as_list(self):
         s = ResearchState(research_question="test")
-        s.visited_urls.add("https://example.com")
+        s.visited_urls.append("https://example.com")
         assert "https://example.com" in s.visited_urls
 
     def test_search_results(self):

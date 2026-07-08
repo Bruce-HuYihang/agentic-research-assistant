@@ -17,7 +17,7 @@ class ResearchState(BaseModel):
     search_results: list[dict] = Field(default_factory=list)
 
     # 已处理的文档/URL（去重用）
-    visited_urls: set[str] = Field(default_factory=set)
+    visited_urls: list[str] = Field(default_factory=list)
 
     # 反思阶段
     reflection_notes: list[str] = Field(default_factory=list)
