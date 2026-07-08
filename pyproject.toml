@@ -1,0 +1,48 @@
+[project]
+name = "agentic-research-assistant"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    # Agent 框架
+    "langgraph>=0.3.0",
+    "langchain-core>=0.3.0",
+    "langchain-openai>=0.3.0",
+
+    # 搜索（无 API Key，国内畅通）
+    "baidusearch>=1.0.0",
+
+    # 爬取
+    "httpx>=0.28",
+    "beautifulsoup4>=4.12",
+    "markdownify>=0.14",
+
+    # 配置
+    "pydantic-settings>=2.0",
+    "pydantic>=2.0",
+    "python-dotenv>=1.0",
+
+    # CLI
+    "rich>=13.0",
+]
+
+[project.optional-dependencies]
+full = [
+    # PDF 解析
+    "PyMuPDF>=1.25",
+
+    # 向量库（Phase 3 需要）
+    "chromadb>=0.6",
+    "sentence-transformers>=3.0",
+
+    # 后端（Phase 4 需要）
+    "fastapi[standard]>=0.115",
+    "uvicorn[standard]>=0.34",
+]
+
+dev = [
+    "pytest>=8.0",
+    "pytest-asyncio>=0.24",
+]
+
+[tool.setuptools.packages.find]
+where = ["app"]
