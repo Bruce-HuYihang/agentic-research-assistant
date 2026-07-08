@@ -34,5 +34,9 @@ class ResearchState(BaseModel):
     # 会话标识
     session_id: str = Field(default_factory=lambda: uuid.uuid4().hex[:8])
 
+    # 记忆增强（Phase 3）
+    use_memory: bool = True
+    memory_matches: list[dict] = Field(default_factory=list)
+
     # 跟踪工具调用时间（供前端进度展示）
     current_step: str = "initializing"

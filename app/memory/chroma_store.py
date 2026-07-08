@@ -1,7 +1,31 @@
-"""向量存储模块（ChromaDB），Phase 3 预备骨架"""
+"""向量存储模块（ChromaDB）——跨会话知识积累"""
 import hashlib
+from typing import Optional
 
-# ChromaDB 是可选依赖，import 失败不影响核心功能
+# 嵌入模型（懒加载）
+_sentence_available = False
+_embedder = None
+
+try:
+    from sentence_transformers import SentenceTransformer
+    _sentence_available = True
+except ImportError:
+    pass
+
+
+def _get_embedder():
+    """懒加载嵌入模型（避免 import 时下载模型导致 SSL 错误）"""
+    global _embedder
+    if _embedder is None and _sentence_available:
+        try:
+            _embedder = SentenceTransformer("BAAI/bge-m3")
+        except Exception as e:
+            print(f"[WARN] 嵌入模型加载失败（bge-m3 可能被墙）: {e}")
+            return None
+    return _embedder
+
+
+# ChromaDB
 try:
     import chromadb
     from chromadb.config import Settings as ChromaSettings
@@ -41,7 +65,10 @@ try:
 
         def search(self, query: str, k: int = 5) -> list[dict]:
             """语义检索相关文档"""
-            results = self.collection.query(query_texts=[query], n_results=k)
+            results = self.collection.query(
+                query_texts=[query],
+                n_results=k,
+            )
             documents = []
             for i in range(len(results["ids"][0])):
                 documents.append({
@@ -61,7 +88,6 @@ try:
     HAS_CHROMA = True
 
 except ImportError:
-    # ChromaDB 未安装，提供空桩
     HAS_CHROMA = False
 
     class ChromaStore:  # type: ignore
@@ -77,3 +103,15 @@ except ImportError:
 
         def count(self) -> int:
             return 0
+
+
+# 全局单例
+_default_store: Optional[ChromaStore] = None
+
+
+def get_knowledge_store(persist_dir: str = "./knowledge_store") -> ChromaStore:
+    """获取全局默认知识库实例"""
+    global _default_store
+    if _default_store is None:
+        _default_store = ChromaStore(persist_dir=persist_dir)
+    return _default_store

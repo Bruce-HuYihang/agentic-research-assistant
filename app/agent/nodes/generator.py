@@ -11,6 +11,16 @@ async def generator_node(state: ResearchState) -> dict:
         sources_text += f"URL: {r['url']}\n"
         sources_text += f"内容:\n{r['content'][:1500]}\n"
 
+    # 历史记忆上下文（Phase 3）
+    memory_text = ""
+    if state.memory_matches:
+        memory_text = "\n\n### 历史知识库匹配结果\n"
+        for i, m in enumerate(state.memory_matches):
+            meta = m.get("metadata", {})
+            memory_text += f"\n## 记忆 {i+1}: {meta.get('title', '无标题')}\n"
+            memory_text += f"URL: {meta.get('url', '')}\n"
+            memory_text += f"内容摘要:\n{m.get('content', '')[:1000]}\n"
+
     prompt = f"""你是一个研究分析专家。基于以下收集到的资料，为用户的问题撰写一篇完整的研究报告。
 
 用户问题: {state.research_question}
@@ -19,6 +29,8 @@ async def generator_node(state: ResearchState) -> dict:
 
 收集到的资料:
 {sources_text}
+
+{memory_text}
 
 要求：
 1. 报告结构完整：结论先行，然后展开分析

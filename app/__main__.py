@@ -9,8 +9,10 @@ from rich.panel import Panel
 from rich.markdown import Markdown
 from rich.prompt import Prompt
 from app.agent.graph import run_research
+from app.memory.session import SessionManager
 
 console = Console()
+session_manager = SessionManager()
 
 
 async def main():
@@ -36,17 +38,27 @@ async def main():
         try:
             result = await run_research(question)
 
-            console.print(f"\n[bold green]研究完成[/bold green]")
-            console.print(f"   搜索轮次: {result.get('iteration', '?')}")
-            console.print(f"   资料数量: {len(result.get('search_results', []))}")
+            # 记录会话
+            session_id = result.session_id
+            session_manager.update_session(session_id, {
+                "question": question,
+                "iterations": result.iteration,
+                "sources_count": len(result.search_results),
+                "report": result.final_report,
+                "status": "completed",
+            })
 
-            report = result.get("final_report")
+            console.print(f"\n[bold green]研究完成[/bold green]")
+            console.print(f"   搜索轮次: {result.iteration}")
+            console.print(f"   资料数量: {len(result.search_results)}")
+
+            report = result.final_report
             if report:
                 console.print("\n" + "=" * 50)
                 console.print(Markdown(report))
                 console.print("=" * 50)
 
-                sources = result.get("search_results", [])
+                sources = result.search_results
                 if sources:
                     console.print("\n[bold]来源链接:[/bold]")
                     for r in sources:
@@ -56,6 +68,8 @@ async def main():
 
         except Exception as e:
             console.print(f"[red]研究出错: {e}[/red]")
+            import traceback
+            console.print(traceback.format_exc())
 
 
 if __name__ == "__main__":
