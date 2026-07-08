@@ -21,15 +21,15 @@ dependencies = [
     "pydantic>=2.0",
     "python-dotenv>=1.0",
 
+    # PDF 解析
+    "PyMuPDF>=1.25",
+
     # CLI
     "rich>=13.0",
 ]
 
 [project.optional-dependencies]
 full = [
-    # PDF 解析
-    "PyMuPDF>=1.25",
-
     # 向量库（Phase 3 需要）
     "chromadb>=0.6",
     "sentence-transformers>=3.0",
