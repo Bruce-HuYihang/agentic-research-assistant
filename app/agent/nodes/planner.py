@@ -1,5 +1,6 @@
 import json
 import re
+from loguru import logger
 from langchain_core.messages import SystemMessage, HumanMessage
 from app.agent.state import ResearchState
 from app.config import settings
@@ -64,6 +65,7 @@ def planner_node(state: ResearchState) -> dict:
     response = settings.llm.invoke(messages)
     plan = _parse_plan(response.content)
 
+    logger.info(f"规划完成: {len(plan.get('search_queries', []))} 个搜索查询")
     return {
         "sub_questions": plan.get("sub_questions", []),
         "search_plan": plan.get("search_queries", []),

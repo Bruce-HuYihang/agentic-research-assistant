@@ -5,3 +5,6 @@ knowledge_store/
 *.egg-info/
 dist/
 .venv/
+logs/
+sessions/
+chroma_db/

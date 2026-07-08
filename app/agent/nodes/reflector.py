@@ -1,6 +1,7 @@
 """反思节点：评估当前收集的信息是否足够回答研究问题"""
 import json
 import re
+from loguru import logger
 from langchain_core.messages import SystemMessage, HumanMessage
 from app.agent.state import ResearchState
 from app.config import settings

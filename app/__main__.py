@@ -4,6 +4,8 @@ Agentic Research Assistant - 命令行入口
 """
 
 import asyncio
+import sys
+from loguru import logger
 from rich.console import Console
 from rich.panel import Panel
 from rich.markdown import Markdown
@@ -13,6 +15,10 @@ from app.memory.session import SessionManager
 
 console = Console()
 session_manager = SessionManager()
+
+# 配置 CLI 日志
+logger.remove()
+logger.add(sys.stderr, level="INFO", format="<green>{time:HH:mm:ss}</green> | <level>{level:<7}</level> | {message}")
 
 
 async def main():

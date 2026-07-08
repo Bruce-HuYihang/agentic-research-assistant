@@ -1,3 +1,4 @@
+"""应用配置——自动从 .env 文件和环境变量读取（Phase 6: 全配置化）"""
 from pydantic_settings import BaseSettings
 from typing import Optional
 from langchain_openai import ChatOpenAI
@@ -16,12 +17,13 @@ class Settings(BaseSettings):
     ANTHROPIC_API_KEY: Optional[str] = None
     GOOGLE_API_KEY: Optional[str] = None
 
-    # ---- 搜索（百度搜索，无需 API Key） ----
-    SEARCH_FRESHNESS: str = "month"   # month / week / day / year
+    # ---- 搜索 ----
+    SEARCH_PROVIDER: str = "baidu"     # baidu / bing
+    SEARCH_FRESHNESS: str = "month"
 
     # ---- 向量库 ----
     VECTOR_STORE_PATH: str = "./knowledge_store"
-    EMBEDDING_MODEL: str = "bge-m3"    # bge-m3（本地，推荐）/ openai（需要额外 API Key）
+    EMBEDDING_MODEL: str = "bge-m3"
 
     # ---- Agent ----
     MAX_SEARCH_ITERATIONS: int = 3
@@ -30,6 +32,11 @@ class Settings(BaseSettings):
     # ---- API ----
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8090
+    API_RATE_LIMIT: str = "10/minute"  # slowapi 格式
+
+    # ---- 日志 ----
+    LOG_LEVEL: str = "INFO"
+    LOG_FILE: str = "./logs/research.log"
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 

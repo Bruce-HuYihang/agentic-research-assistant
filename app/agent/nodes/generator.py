@@ -1,25 +1,30 @@
+"""生成节点：基于收集的资料生成研究报告"""
+
+from loguru import logger
+from langchain_core.messages import SystemMessage, HumanMessage
 from app.agent.state import ResearchState
+from app.config import settings
 
 
 async def generator_node(state: ResearchState) -> dict:
     """生成最终研究报告"""
 
-    # 聚合所有搜索结果
     sources_text = ""
     for i, r in enumerate(state.search_results):
         sources_text += f"\n## 来源 {i+1}: {r['title']}\n"
         sources_text += f"URL: {r['url']}\n"
         sources_text += f"内容:\n{r['content'][:1500]}\n"
 
-    # 历史记忆上下文（Phase 3）
+    # 历史记忆上下文
     memory_text = ""
     if state.memory_matches:
         memory_text = "\n\n### 历史知识库匹配结果\n"
-        for i, m in enumerate(state.memory_matches):
+        for i, m in enumerate(state.memory_matches[:5]):  # 最多5条
             meta = m.get("metadata", {})
+            content = (m.get("content") or "")[:1000]
             memory_text += f"\n## 记忆 {i+1}: {meta.get('title', '无标题')}\n"
             memory_text += f"URL: {meta.get('url', '')}\n"
-            memory_text += f"内容摘要:\n{m.get('content', '')[:1000]}\n"
+            memory_text += f"内容摘要:\n{content}\n"
 
     prompt = f"""你是一个研究分析专家。基于以下收集到的资料，为用户的问题撰写一篇完整的研究报告。
 
@@ -39,16 +44,17 @@ async def generator_node(state: ResearchState) -> dict:
 4. 如果有知识盲区，如实说明
 5. 用中文撰写"""
 
-    from app.config import settings
-    from langchain_core.messages import SystemMessage, HumanMessage
-
     messages = [
         SystemMessage(content="你是一个专业的研究分析专家，擅长整合多源信息撰写综述报告。"),
         HumanMessage(content=prompt),
     ]
 
+    logger.info(f"生成报告: 共{len(state.search_results)}个来源, {state.iteration}轮搜索")
+
     response = settings.llm.invoke(messages)
     report = response.content
+
+    logger.info(f"报告生成完成: {len(report)}字符")
 
     return {
         "final_report": report,
