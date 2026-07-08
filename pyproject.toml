@@ -28,6 +28,9 @@ dependencies = [
     "fastapi>=0.115",
     "uvicorn[standard]>=0.34",
 
+    # 前端（Phase 5）
+    "streamlit>=1.40",
+
     # CLI
     "rich>=13.0",
 ]
@@ -37,8 +40,6 @@ full = [
     # 向量库（Phase 3 需要）
     "chromadb>=0.6",
     "sentence-transformers>=3.0",
-
-
 ]
 
 dev = [
